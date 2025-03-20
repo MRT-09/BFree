@@ -135,4 +135,11 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+# idea
 .idea/
+
+# expo
+.expo
+
+# package-lock.json
+package-lock.json
