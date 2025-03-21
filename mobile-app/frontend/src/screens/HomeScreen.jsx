@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, ActivityIndicator } from 'react-native';
+import React, { useEffect } from 'react';
+import { StyleSheet, View, Text } from 'react-native';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Feather from '@expo/vector-icons/Feather';
 
-const EXPO_PUBLIC_API_URL = process.env.EXPO_PUBLIC_API_URL;
-
-const HomeScreen = () => {
+const HomeScreen = () => { 
   const data = [4, 6, 10, 8, 6, 4, 5];
   const labels = ["6AM", "9AM", "12PM", "3PM", "6PM", "9PM", "12AM"];
   const maxValue = Math.max(...data);
@@ -17,7 +15,7 @@ const HomeScreen = () => {
       <Navbar />
       <View style={styles.content}>
         <View style={styles.chartcont}>
-          <Text style={styles.title}>3-Hourly Distribution</Text>
+          <Text style={styles.title}>Hourly Distribution</Text>
             <View style={styles.chartContainer}>
               {data.map((value, index) => (
                 <View key={index} style={styles.barContainer}>
@@ -72,7 +70,7 @@ const styles = StyleSheet.create({
   },
   chartcont: {
     width: '100%',
-    height: 330,
+    height: '60%',
     backgroundColor: 'white',
     padding: 15,
     borderRadius: 10,
@@ -95,7 +93,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     height: '80%',
     justifyContent: 'space-between',
-    marginTop: 30,
+    marginTop: '5%',
   },
   barContainer: {
     alignItems: 'center',
@@ -129,7 +127,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 35,
-    height: 120,
+    height: '30%',
     width: '100%',
   },
   peaktext: {
