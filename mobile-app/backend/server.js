@@ -11,7 +11,9 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/incidents', require('./routes/incidentsRoute'));
+
+const incidentsRoute = require('./routes/incidentsRoute');
+app.use('/incidents', incidentsRoute);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

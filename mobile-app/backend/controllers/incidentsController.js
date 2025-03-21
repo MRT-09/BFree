@@ -3,8 +3,9 @@ const { format, startOfWeek, addDays } = require('date-fns');
 
 exports.getDailyIncidents = async (req, res) => {
     try {
+        console.log(req);
         const { date } = req.body;
-
+        console.log(date);
         if (!date) {
             return res.status(400).json({ message: 'Date is required' });
         }
