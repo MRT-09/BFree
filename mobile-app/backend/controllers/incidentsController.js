@@ -13,7 +13,7 @@ exports.getDailyIncidents = async (req, res) => {
     const Ndate = format(new Date(date), 'yyyy-MM-dd');
     console.log('Formatted date:', Ndate);
 
-    const { data, error } = await supabase.rpc('public.dailyIncidents', { Ndate });
+    const { data, error } = await supabase.rpc('dailyIncidents', { Ndate:date });
 
     if (error) {
       console.error('Supabase error:', error.message);
@@ -43,7 +43,7 @@ exports.getWeeklyIncidents = async (req, res) => {
             const currentDate = addDays(start, i);
 
             const { dataI, errorI } = await supabase
-            .rpc('public.dailyIncidents', { date: format(currentDate, 'yyyy-MM-dd') });
+            .rpc('dailyIncidents', { date: format(currentDate, 'yyyy-MM-dd') });
 
             if (errorI)
                 return res.status(400).json({ message: errorI.message });
@@ -91,7 +91,7 @@ exports.getThreeHourlyIncidents = async (req, res) => {
             const currentHour = start + i;
 
             const { dataI, errorI } = await supabase
-                .rpc('public.hourlyIncidents', { date: Ndate, hour: currentHour });
+                .rpc('hourlyIncidents', { date: Ndate, hour: currentHour });
 
             if (errorI)
                 return res.status(400).json({ message: errorI.message });
