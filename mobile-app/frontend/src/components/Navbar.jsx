@@ -1,16 +1,49 @@
-import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Platform, StatusBar, SafeAreaView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, Platform, StatusBar, SafeAreaView, ActivityIndicator } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import { FontAwesome } from '@expo/vector-icons';
-import Avatar from './Avatar';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
-  
-  
-  const displayName = user?.user_metadata?.username || 
-                      (user?.email ? user.email.split('@')[0] : 'Anonymous');
-  
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const dat1 = new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+  const fetchData = async () => {
+    try {
+        const date = new Date().toISOString().split('T')[0];
+        const url = `http://192.168.185.38:5000/incidents/daily`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ date }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const json = await response.json();
+        setData(json.incidents);
+    } catch (err) {
+        console.error('Error fetching data:', err.message);
+        setError(err.message);
+    } finally {
+        setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const handleLogout = async () => {
     try {
       await logout();
@@ -23,21 +56,24 @@ const Navbar = () => {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <View style={styles.profileSection}>
-          <Avatar size={40} />
           <View style={styles.userInfo}>
-            <Text style={styles.username}>
-              {displayName}
-            </Text>
-            <View style={styles.statusContainer}>
-              <View style={styles.statusIndicator} />
-              <Text style={styles.statusText}>Online</Text>
-            </View>
+            <Text style={styles.header}>Today's Activity</Text>
+            <Text style={styles.date}>{dat1}</Text>
           </View>
+          <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
+            <FontAwesome name="sign-out" size={24} color="#4285F4" />
+          </TouchableOpacity>
         </View>
-        
-        <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-          <FontAwesome name="sign-out" size={24} color="#4285F4" />
-        </TouchableOpacity>
+        {loading ? (
+          <ActivityIndicator size="large" color="#4285F4" />
+        ) : error ? (
+          <Text style={styles.errorText}>Error: {error}</Text>
+        ) : (
+          <View style={styles.card}>
+            <Text style={styles.cardHeader}>Total Incidents today</Text>
+            <Text style={styles.cardValue}>{data || 0}</Text>
+          </View>
+        )}
       </View>
     </SafeAreaView>
   );
@@ -46,59 +82,77 @@ const Navbar = () => {
 const styles = StyleSheet.create({
   safeArea: {
     backgroundColor: 'white',
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight + 10 : 0,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight + 5 : 0,
+    elevation: 2.5,
   },
   container: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
     backgroundColor: 'white',
-    elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 3,
+    shadowRadius: 2,
   },
   profileSection: {
+    width: '100%',
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  profileImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    marginRight: 12,
   },
   userInfo: {
     justifyContent: 'center',
-    marginLeft: 12,
+    alignItems: 'flex-start',
   },
-  username: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
+  header: {
+    fontSize: 27,
+    fontWeight: "bold",
   },
-  statusContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 2,
-  },
-  statusIndicator: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#4CAF50',
-    marginRight: 4,
-  },
-  statusText: {
-    fontSize: 14,
-    color: '#666',
+  date: {
+    color: "gray",
+    fontWeight: "500",
+    marginBottom: 10,
+    fontSize: 17,
   },
   logoutButton: {
-    padding: 8,
+    paddingVertical: 10,
+    paddingLeft: 10,
+    paddingRight: 5,
+    backgroundColor: '#f3f4f6',
+    borderRadius: 100,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  card: {
+    paddingHorizontal: 20,
+    paddingVertical: 13,
+    backgroundColor: '#edf3fe',
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    marginBottom: 15,
+    marginTop: 15,
+  },
+  cardHeader: {
+    textJustify: 'center',
+    fontSize: 18,
+    fontWeight: '500',
+    color: '#2f4dcc',
+  },
+  cardValue: {
+    textJustify: 'center',
+    fontSize: 40,
+    fontWeight: '600',
+    color: '#2f4dcc',
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 16,
+    textAlign: 'center',
   },
 });
 
-export default Navbar; 
+export default Navbar;
