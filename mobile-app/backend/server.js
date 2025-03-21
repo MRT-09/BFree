@@ -11,6 +11,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/incidents', require('./routes/incidentsRoute'));
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -19,4 +20,4 @@ app.use((err, req, res, next) => {
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-}); 
+});
