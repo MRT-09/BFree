@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 const HomeScreen = () => {
   const { user } = useAuth();
@@ -17,6 +18,7 @@ const HomeScreen = () => {
           <Text style={styles.welcomeText}>Welcome, {displayName}</Text>
         )}
       </View>
+      <Footer />
     </View>
   );
 };

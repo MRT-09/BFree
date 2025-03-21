@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import LoginScreen from '../screens/LoginScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 import HomeScreen from '../screens/HomeScreen';
+import IncidentAnalyticsScreen from '../screens/IncidentAnalyticsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +23,7 @@ const AppNavigator = () => {
         {user ? (
           <Stack.Group>
             <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="IncidentAnalytics" component={IncidentAnalyticsScreen} />
           </Stack.Group>
         ) : (
           <Stack.Group>
