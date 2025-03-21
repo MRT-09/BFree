@@ -16,3 +16,14 @@ export async function playSound() {
         console.error('Error playing sound:', error);
     }
 }
+
+async function playSoundFromServer() {
+    try {
+        // Call the Flask endpoint
+        await fetch('/trigger-sound');
+        // Play the sound after the server responds
+        await playSound();
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}

@@ -2,7 +2,7 @@ from flask import Flask, request, render_template
 import requests
 
 app = Flask(__name__)
-ESP32_IP = "192.168.185.1"  # Replace with your ESP32's IP
+ESP32_IP = "192.168.185.1" 
 
 @app.route('/')
 def index():
@@ -44,6 +44,10 @@ def send_command():
             'success': False,
             'error': str(e)
         }, 500
-
+    
+@app.route('/trigger-sound')
+def trigger_sound():
+    # Optional: Add server-side logic here (e.g., logging, auth)
+    return '', 204  # Return empty response (No Content)
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
