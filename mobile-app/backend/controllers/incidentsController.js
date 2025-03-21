@@ -2,29 +2,27 @@ const supabase = require('../config/supabase');
 const { format, startOfWeek, addDays } = require('date-fns');
 
 exports.getDailyIncidents = async (req, res) => {
-  try {
-    console.log('Request query:', req.body);
-    const { date } = req.body;
+    try {
+        const { date } = req.body;
 
-    if (!date) {
-      return res.status(400).json({ message: 'Date is required' });
+        if (!date) {
+            return res.status(400).json({ message: 'Date is required' });
+        }
+
+        const ndate = format(new Date(date), 'yyyy-MM-dd');
+
+        const { data, error } = await supabase.rpc('dailyIncidents', { ndate });
+
+        if (error) {
+            console.error('Supabase error:', error.message);
+            return res.status(400).json({ message: error.message });
+        }
+
+        res.status(200).json({ incidents: data.length });
+    } catch (error) {
+        console.error('Server error:', error.message);
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
-
-    const ndate = format(new Date(date), 'yyyy-MM-dd');
-    console.log('Formatted date:', ndate);
-
-    const { data, error } = await supabase.rpc('dailyIncidents', { ndate });
-
-    if (error) {
-      console.error('Supabase error:', error.message);
-      return res.status(400).json({ message: error.message });
-    }
-
-    res.status(200).json({ incidents: data.length });
-  } catch (error) {
-    console.error('Server error:', error.message);
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
 };
 
 exports.getWeeklyIncidents = async (req, res) => {
