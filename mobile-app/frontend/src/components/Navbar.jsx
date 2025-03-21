@@ -3,7 +3,10 @@ import { StyleSheet, View, Text, TouchableOpacity, Platform, StatusBar, SafeArea
 import { useAuth } from '../context/AuthContext';
 import { FontAwesome } from '@expo/vector-icons';
 
+const EXPO_PUBLIC_API_URL = process.env.EXPO_PUBLIC_API_URL;
+
 const Navbar = () => {
+  
   const { user, logout } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -16,7 +19,7 @@ const Navbar = () => {
   const fetchData = async () => {
     try {
         const date = new Date().toISOString().split('T')[0];
-        const url = `http://192.168.185.38:5000/incidents/daily`;
+        const url = `${EXPO_PUBLIC_API_URL}incidents/daily`;
 
         const response = await fetch(url, {
             method: 'POST',
@@ -83,7 +86,7 @@ const styles = StyleSheet.create({
   safeArea: {
     backgroundColor: 'white',
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight + 5 : 0,
-    elevation: 2.5,
+    elevation: 1,
   },
   container: {
     paddingVertical: 10,
