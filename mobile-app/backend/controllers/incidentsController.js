@@ -10,10 +10,10 @@ exports.getDailyIncidents = async (req, res) => {
       return res.status(400).json({ message: 'Date is required' });
     }
 
-    const Ndate = format(new Date(date), 'yyyy-MM-dd');
-    console.log('Formatted date:', Ndate);
+    const ndate = format(new Date(date), 'yyyy-MM-dd');
+    console.log('Formatted date:', ndate);
 
-    const { data, error } = await supabase.rpc('dailyIncidents', { Ndate:date });
+    const { data, error } = await supabase.rpc('dailyIncidents', { ndate });
 
     if (error) {
       console.error('Supabase error:', error.message);
@@ -41,9 +41,10 @@ exports.getWeeklyIncidents = async (req, res) => {
         let returnData = [];
         for (let i = 0; i < 7; i++) {
             const currentDate = addDays(start, i);
+            const ndate = format(currentDate, 'yyyy-MM-dd');
 
             const { dataI, errorI } = await supabase
-            .rpc('dailyIncidents', { date: format(currentDate, 'yyyy-MM-dd') });
+            .rpc('dailyIncidents', { ndate });
 
             if (errorI)
                 return res.status(400).json({ message: errorI.message });
@@ -82,25 +83,27 @@ exports.getThreeHourlyIncidents = async (req, res) => {
         if (!hour || !date)
             return res.status(400).json({ message: 'Hour and date are required' });
 
-        const Ndate = format(new Date(date), 'yyyy-MM-dd');
+        const ndate = format(new Date(date), 'yyyy-MM-dd');
 
         let prc = hour % 3;
         let start = hour - prc;
-        let returnData = [ { hour: start } ];
+        let returnData = [];
         for (let i = 0; i < 3; i++) {
-            const currentHour = start + i;
+            const hour = start + i;
 
             const { dataI, errorI } = await supabase
-                .rpc('hourlyIncidents', { date: Ndate, hour: currentHour });
+                .rpc('hourlyIncidents', { ndate, hour });
 
             if (errorI)
                 return res.status(400).json({ message: errorI.message });
 
             returnData.push({
-                hour: currentHour,
+                hour: hour,
                 incidents: dataI.length
             });
         }
+
+        return res.status(200).json({ incidents: returnData.length });
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
