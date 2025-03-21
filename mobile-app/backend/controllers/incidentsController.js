@@ -19,7 +19,10 @@ exports.getDailyIncidents = async (req, res) => {
             console.error('Supabase error:', error.message);
             return res.status(400).json({ message: error.message });
         }
-        res.status(200).json({ incidents: data.length });
+
+        console.log({incidents: data.length})
+
+        return res.status(200).json({ incidents: data.length });
     } catch (error) {
         console.error('Server error:', error.message);
         res.status(500).json({ message: 'Server error', error: error.message });
@@ -28,34 +31,74 @@ exports.getDailyIncidents = async (req, res) => {
 
 exports.getWeeklyIncidents = async (req, res) => {
     try {
+        console.log('Request body:', req.body);
         const { date } = req.body;
 
         if (!date)
             return res.status(400).json({ message: 'Date is required' });
 
         const Ndate = format(new Date(date), 'yyyy-MM-dd');
-
-        const start = format(startOfWeek(Ndate), { weekStartsOn: 1 });
+        console.log('Formatted date:', Ndate);
+        const start = startOfWeek(Ndate);
 
         let returnData = [];
         for (let i = 0; i < 7; i++) {
             const currentDate = addDays(start, i);
             const ndate = format(currentDate, 'yyyy-MM-dd');
 
-            const { dataI, errorI } = await supabase
-            .rpc('dailyIncidents', { ndate });
+            const { data, error } = await supabase.rpc('dailyIncidents', { ndate });
 
-            if (errorI)
+            if (error)
+                return res.status(400).json({ message: error.message });
+
+            returnData.push({
+                date: format(currentDate, 'yyyy-MM-dd'),
+                incidents: data.length
+            });
+        }
+
+        console.log(returnData);
+
+        return res.status(200).json({ incidents: returnData });
+    } catch (error) {
+        console.error('Server error: ', error.message)
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+exports.getPreviousWeeklyIncidents = async (req, res) => {
+    try {
+        console.log('Request body:', req.body);
+        const { date } = req.body;
+        const date1= addDays(date, -7);
+        if (!date1)
+            return res.status(400).json({ message: 'Date is required' });
+        
+        const Ndate = format(new Date(date1), 'yyyy-MM-dd');
+        console.log('Formatted date:', Ndate);
+        const start = startOfWeek(Ndate);
+
+        let returnData = [];
+        for (let i = 0; i < 7; i++) {
+            const currentDate = addDays(start, i);
+            const ndate = format(currentDate, 'yyyy-MM-dd');
+
+            const { data, error } = await supabase.rpc('dailyIncidents', { ndate });
+
+            if (error)
                 return res.status(400).json({ message: errorI.message });
 
             returnData.push({
                 date: format(currentDate, 'yyyy-MM-dd'),
-                incidents: dataI.length
+                incidents: data.length
             });
         }
 
-        res.status(200).json({ incidents: returnData });
+        console.log(returnData);
+
+        return res.status(200).json({ incidents: returnData });
     } catch (error) {
+        console.error('Server error: ', error.message)
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
@@ -69,7 +112,7 @@ exports.getIncidentsCount = async (req, res) => {
         if (error)
             return res.status(400).json({ message: error.message });
 
-        res.status(200).json({ incidentsCount: data.length });
+        return res.status(200).json({ incidentsCount: data.length });
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
