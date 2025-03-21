@@ -3,20 +3,26 @@ const { format, startOfWeek, addDays } = require('date-fns');
 
 exports.getDailyIncidents = async (req, res) => {
   try {
+    console.log('Request query:', req.query); // Debugging log
     const { date } = req.query;
 
-    if (!date)
+    if (!date) {
       return res.status(400).json({ message: 'Date is required' });
+    }
 
     const Ndate = format(new Date(date), 'yyyy-MM-dd');
-    const { data, error } = await supabase
-      .rpc('dailyIncidents', { Ndate });
+    console.log('Formatted date:', Ndate);
 
-    if (error)
+    const { data, error } = await supabase.rpc('dailyIncidents', { Ndate });
+
+    if (error) {
+      console.error('Supabase error:', error.message);
       return res.status(400).json({ message: error.message });
+    }
 
     res.status(200).json({ incidents: data.length });
   } catch (error) {
+    console.error('Server error:', error.message);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
