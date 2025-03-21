@@ -37,6 +37,9 @@ void setup() {
       "\"acceleration_x\":" + String(a.acceleration.x) + "," +
       "\"acceleration_y\":" + String(a.acceleration.y) + "," +
       "\"acceleration_z\":" + String(a.acceleration.z) + "," +
+      "\"gyro_x\":" + String(g.gyro.x) + "," +
+      "\"gyro_y\":" + String(g.gyro.y) + "," +
+      "\"gyro_z\":" + String(g.gyro.z) + "," +
       "\"temperature\":" + String(temp.temperature) + "}";
     
     request->send(200, "application/json", json);
@@ -67,8 +70,16 @@ void loop() {
   Serial.print(a.acceleration.y);
   Serial.print(" Z:");
   Serial.print(a.acceleration.z);
-  Serial.print(" Temp:");
+  
+  Serial.print(" | Gyro X:");
+  Serial.print(g.gyro.x);
+  Serial.print(" Y:");
+  Serial.print(g.gyro.y);
+  Serial.print(" Z:");
+  Serial.print(g.gyro.z);
+  
+  Serial.print(" | Temp:");
   Serial.println(temp.temperature);
 
-  delay(1000);
+  delay(100);
 }

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ESP32 Control Panel</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <h1>ESP32 Control Panel</h1>
+    
+    <div>
+        <h2>Send Command</h2>
+        <input type="text" id="command" placeholder="Enter command">
+        <button onclick="sendCommand()">Send</button>
+        <div id="command-response"></div>
+    </div>
+
+    <div>
+        <h2>Sensor Data</h2>
+        <button onclick="fetchSensorData()">Refresh Data</button>
+        <pre id="sensor-data"></pre>
+    </div>
+
+    <script>
+        function fetchSensorData() {
+            axios.get('/get-sensor-data')
+                .then(response => {
+                    document.getElementById('sensor-data').textContent = 
+                        JSON.stringify(response.data, null, 2);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        function sendCommand() {
+            const command = document.getElementById('command').value;
+            if (!command) return;
+
+            axios.post('/send-command', { command })
+                .then(response => {
+                    document.getElementById('command-response').textContent = 
+                        'Response: ' + JSON.stringify(response.data, null, 2);
+                })
+                .catch(error => {
+                    document.getElementById('command-response').textContent = 
+                        'Error: ' + error.response.data.error;
+                });
+        }
+
+        // Auto-refresh sensor data every 2 seconds
+        setInterval(fetchSensorData, 150);
+        fetchSensorData(); // Initial load
+    </script>
+</body>
+</html>
