@@ -2,13 +2,24 @@ import React from "react";
 import { View, Text, Dimensions } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 
-const LineChartComponent = () => {
+const LineChartComponent = (props) => {
   
+
+
+    let Wdata=[];
+    for(let i=1;i<7;i++){
+        Wdata.push(props.data[i].incidents);
+
+    }
+    Wdata.push(props.data[0].incidents);
   const chartData = {
+    
+    
+    
     labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], 
     datasets: [
       {
-        data: [10, 20, 15, 30, 25, 40, 35], 
+        data: Wdata,
         strokeWidth: 2, 
         color: (opacity = 1) => `rgba(75, 192, 192, ${opacity})`, 
       },

@@ -18,8 +18,8 @@ const EXPO_PUBLIC_API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 import LineChartComponent from "../components/LineChart";
 const Progress = (props) => {
-  if(props.cw===0){
-    return(<View>NaN</View>)
+  if(props.cw===0 || props.pw==0){
+    return(<Text>NaN</Text>);
   }
   
   const progress = Math.floor(props.pw / props.cw * 100);
@@ -67,7 +67,7 @@ const IncidentAnalytics = () => {
   const navigation = useNavigation();
 
     const [data, setData] = useState(null);
-    const [pdata, setPdata] =useState(null);
+    const [pdata, setPData] =useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [wsum,setSum]=useState(0);
@@ -135,7 +135,7 @@ const IncidentAnalytics = () => {
             let currentIncidents = json.incidents[i].incidents;
             sum += currentIncidents;
           }
-          setSum(sum);
+          setPSum(sum);
       } catch (err) {
           console.error('Error fetching data:', err.message);
           setError(err.message);
@@ -171,31 +171,31 @@ const IncidentAnalytics = () => {
       <View style={styles.container1}>
         <View style={styles.card}>
           <View style={styles.cardHalf}>
-            <Text style={styles.totalIncindets}>Total incidents this week</Text>
-            <Progress cw={70} pw={60}/>
+            <Text style={styles.totalIncidents}>Total incidents this week</Text>
+            <Progress cw={wsum} pw={pwsum}/>
             
           </View>
           <View style={styles.cardHalf}>
-            <Text style={styles.incidentsText}>0</Text>
+            <Text style={styles.incidentsText}>{wsum}</Text>
             
           </View>
         </View>
 
         <View style={styles.card}>
           <View style={styles.cardHalf}>
-            <Text style={styles.totalIncindets}>Incidnets today</Text>
-            <Text style={styles.totalIncindets}>Incidnets yestarday</Text>
+            <Text style={styles.totalIncidents}>Incidents last week</Text>
+            
           </View>
           <View style={styles.cardHalf}>
-            <Text style={styles.incidentsText}>{wsum}</Text>
-            <Text style={styles.incidentsText}>0</Text>
+            <Text style={styles.incidentsText}>{pwsum}</Text>
+            
           </View>
         </View>
-        <View style={styles.incidnetTrend}>
+        <View style={styles.incidentTrend}>
           <Text style={styles.iText}>Incident trend</Text>
           <Suspense fallback={Fallback} style={styles.chartVis}>
             
-          <LineChartComponent/>
+          {loading ? <Fallback /> : <LineChartComponent data={data}/>}
          </Suspense>
         </View>
         
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     width: '100%',
   
   },
-  totalIncindets: {
+  totalIncidents: {
     fontSize: 17,
     color: "gray",
   },
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
   incidentsText: {
     fontSize: 25,
   },
-  incidnetTrend: {
+  incidentTrend: {
     width: "95%",
     height: 390,
     backgroundColor: "white",
