@@ -1,17 +1,11 @@
 import React from "react";
 import {
-    Pressable,
     StyleSheet,
     View,
     Text,
-    TouchableOpacity, 
-    Platform, 
-    StatusBar, 
-    SafeAreaView,
 } from "react-native";
 import Entypo from '@expo/vector-icons/Entypo';
 import { useNavigation } from "@react-navigation/native";
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { Pressable as PressableRaw } from 'react-native';
 import Octicons from '@expo/vector-icons/Octicons';
 const Footer = () => {
@@ -26,11 +20,11 @@ const Footer = () => {
     return ( 
         <View style = { styles.footer } >
             <Pressable style={styles.pressab} onPress = {() => navigation.navigate('Home')} >
-                <Entypo name = "home" size = { 30 } color = "#3662e3" />
+                <Entypo name = "home" size = {28} color = "#3662e3" />
                 <Text style = { styles.footerText } > Home </Text>
             </Pressable>
             <Pressable style={styles.pressab} onPress = {() => navigation.navigate('IncidentAnalytics')} >
-                <Octicons name="graph" size={30} color="#3662e3" />
+                <Octicons name="graph" size={28} color="#3662e3" />
                 <Text style={styles.footerText}>Analytics</Text>
             </Pressable>
         </View>
@@ -38,27 +32,27 @@ const Footer = () => {
 };
 const styles = StyleSheet.create({
     footer: {
-        height: 70,
-        backgroundColor: 'white',
+        height: 80,
         padding: 10,
         flexDirection: "row",
         justifyContent: "space-around",
         alignItems: "center",
-        elevation: 2,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
+        backgroundColor: "white",
+        borderTopWidth: 1,
+        borderTopColor: "#e5e7eb",
     },
     footerText: {
         color: "#3662e3",
         fontSize: 14,
         textAlign: "center",
-        fontFamily: 'Roboto',
+        fontWeight: "500",
     },
     pressab: {
+        marginTop: 5,
+        flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
+        height: '85%',
     },
 });
 export default Footer;

@@ -85,7 +85,7 @@ const Navbar = () => {
 const styles = StyleSheet.create({
   safeArea: {
     backgroundColor: 'white',
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight + 5 : 0,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight + 10 : 0,
     elevation: 1,
   },
   container: {

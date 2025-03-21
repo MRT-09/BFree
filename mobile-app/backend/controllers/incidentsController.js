@@ -25,7 +25,7 @@ exports.getDailyIncidents = async (req, res) => {
         return res.status(200).json({ incidents: data.length });
     } catch (error) {
         console.error('Server error:', error.message);
-        res.status(500).json({ message: 'Server error', error: error.message });
+        return res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
 
@@ -62,7 +62,7 @@ exports.getWeeklyIncidents = async (req, res) => {
         return res.status(200).json({ incidents: returnData });
     } catch (error) {
         console.error('Server error: ', error.message)
-        res.status(500).json({ message: 'Server error', error: error.message });
+        return res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
 
@@ -99,7 +99,7 @@ exports.getPreviousWeeklyIncidents = async (req, res) => {
         return res.status(200).json({ incidents: returnData });
     } catch (error) {
         console.error('Server error: ', error.message)
-        res.status(500).json({ message: 'Server error', error: error.message });
+        return res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
 
@@ -114,13 +114,14 @@ exports.getIncidentsCount = async (req, res) => {
 
         return res.status(200).json({ incidentsCount: data.length });
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
+        return res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
 
 exports.getThreeHourlyIncidents = async (req, res) => {
     try {
         const { date, hour } = req.body;
+        console.log('Request body:', req.body);
 
         if (!hour || !date)
             return res.status(400).json({ message: 'Hour and date are required' });
@@ -131,22 +132,41 @@ exports.getThreeHourlyIncidents = async (req, res) => {
         let start = hour - prc;
         let returnData = [];
         for (let i = 0; i < 3; i++) {
-            const hour = start + i;
+            const currentHour = start + i;
+            const currHour = `${currentHour.toString().padStart(2, '0')}:00:00`;
 
-            const { dataI, errorI } = await supabase
-                .rpc('hourlyIncidents', { ndate, hour });
+            console.log(`Calling Supabase RPC with ndate: ${ndate}, hour: ${currHour}`);
 
-            if (errorI)
-                return res.status(400).json({ message: errorI.message });
+            // Explicitly cast the hour parameter to TIME
+            const { data, error } = await supabase
+                .rpc('hourlyIncidents', { ndate, currHour:hour })
+                .select('*');
+
+            console.log(`Supabase response for hour ${currHour}:`, { data, error });
+
+            if (error)
+                return res.status(400).json({ message: error.message });
+
+            if (!data || data.length === 0) {
+                console.warn(`No data found for hour ${currHour}`);
+                returnData.push({
+                    hour: currentHour,
+                    incidents: 0
+                });
+                continue;
+            }
 
             returnData.push({
-                hour: hour,
-                incidents: dataI.length
+                hour: currHour,
+                incidents: data.length
             });
         }
 
-        return res.status(200).json({ incidents: returnData.length });
+        console.log('3-hourly data:', returnData);
+
+        return res.status(200).json({ incidents: returnData });
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
+        console.error('Server error:', error.message);
+        return res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
