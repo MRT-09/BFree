@@ -2,7 +2,7 @@ import { Audio } from 'expo-av';
 import io from 'socket.io-client';
 
 const FLASK_PUBLIC_API_URL = process.env.EXPO_PUBLIC_FLASK_API_URL;
-const soundFile = require('../../assets/cellphone-ringing-6475.mp3');
+const soundFile = require('../../assets/cell-phone-dbl-beep-notification-83306.mp3');
 
 console.log('Initializing WebSocket connection...');
 
@@ -22,7 +22,7 @@ socket.on('disconnect', () => {
 });
 
 socket.on('connect_error', (error) => {
-    console.error('WebSocket connection error:', error);
+    //console.error('WebSocket connection error:', error);
 });
 export async function playSound() {
     try {

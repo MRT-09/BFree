@@ -11,11 +11,15 @@ def sensor_data():
     data = request.get_json()
     #print("Received sensor data:", data)
     prediction = predict("model/rf_model.pkl", data['normalized'])
+
+    print(prediction)
     
     if(prediction != 0):
         user_data={"user_id": "c91f5d39-8ea5-486f-a2cf-98f847b6f92d"}
         response = requests.post("http://localhost:5000/incidents/add", json=user_data) 
-        return redirect("/trigger-sound")
+        socketio.emit('playSound')
+    
+    return []
 
 
 @app.route('/trigger-sound', methods=['POST', 'GET'])

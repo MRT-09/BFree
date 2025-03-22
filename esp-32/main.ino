@@ -144,7 +144,7 @@ void loop() {
   db.g = g;
   
   dq.push_front(db);
-  if (dq.size() > 600) {
+  if (dq.size() > 300) {
     dq.pop_back();
   }
   
@@ -196,5 +196,5 @@ void loop() {
   Serial.println(dq.size());
   Serial.println("-----");
   
-  delay(100);
+  delay(200);
 }
