@@ -18,7 +18,7 @@
 
 Embedded scheme:
 
-![scheme](Images/schema-nbg.png)
+![scheme](Resources/schema-nbg.png)
 
 ### Machine learning model
 
