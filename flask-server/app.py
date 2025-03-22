@@ -1,8 +1,22 @@
-from flask import Flask, request, render_template
-from flask_socketio import SocketIO, emit
+from flask import Flask, request, redirect
+from flask_socketio import SocketIO
+from model.predict_module import predict
+import requests
 
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
+
+@app.route('/sensor_data', methods=['POST'])
+def sensor_data():
+    data = request.get_json()
+    #print("Received sensor data:", data)
+    prediction = predict("model/rf_model.pkl", data['normalized'])
+    
+    if(prediction != 0):
+        user_data={"user_id": "c91f5d39-8ea5-486f-a2cf-98f847b6f92d"}
+        response = requests.post("http://localhost:5000/incidents/add", json=user_data) 
+        return redirect("/trigger-sound")
+
 
 @app.route('/trigger-sound', methods=['POST', 'GET'])
 def trigger_sound():

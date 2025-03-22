@@ -3,7 +3,9 @@ import io from 'socket.io-client';
 
 const FLASK_PUBLIC_API_URL = process.env.EXPO_PUBLIC_FLASK_API_URL;
 const soundFile = require('../../assets/cellphone-ringing-6475.mp3');
+
 console.log('Initializing WebSocket connection...');
+
 const socket = io(FLASK_PUBLIC_API_URL);
 
 socket.on('connect', () => {

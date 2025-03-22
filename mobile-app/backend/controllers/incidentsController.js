@@ -170,3 +170,40 @@ exports.getThreeHourlyIncidents = async (req, res) => {
         return res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
+
+exports.addIncident = async (req, res) => {
+    try {
+        const { user_id } = req.body;
+
+        
+        if (!user_id) {
+            return res.status(400).json({ message: 'user_id is required' });
+        }
+
+        const { data, error } = await supabase
+            .from('incidents')
+            .insert([{
+                user_id
+            }])
+            .single();
+
+        
+        if (error) {
+            console.error('Supabase insert error:', error.message);
+            return res.status(400).json({ message: error.message });
+        }
+
+        
+        return res.status(201).json({
+            message: 'Incident created successfully',
+            incident: data
+        });
+
+    } catch (error) {
+        console.error('Server error:', error.message);
+        return res.status(500).json({
+            message: 'Server error',
+            error: error.message
+        });
+    }
+};
