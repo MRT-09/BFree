@@ -4,8 +4,11 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Feather from '@expo/vector-icons/Feather';
-
-const HomeScreen = () => { 
+import '../services/sound';
+const HomeScreen = () => {
+  useEffect(() => {
+    console.log('HomeScreen loaded');
+  }, []);
   const data = [4, 6, 10, 8, 6, 4, 5];
   const labels = ["6AM", "9AM", "12PM", "3PM", "6PM", "9PM", "12AM"];
   const maxValue = Math.max(...data);
@@ -16,21 +19,21 @@ const HomeScreen = () => {
       <View style={styles.content}>
         <View style={styles.chartcont}>
           <Text style={styles.title}>Hourly Distribution</Text>
-            <View style={styles.chartContainer}>
-              {data.map((value, index) => (
-                <View key={index} style={styles.barContainer}>
-                  <View
-                    style={[
-                      styles.bar,
-                      {
-                        height: `${(value / maxValue) * 80}%`,
-                      },
-                    ]}
-                  />
-                  <Text style={styles.label}>{labels[index]}</Text>
-                </View>
-              ))}
-            </View>
+          <View style={styles.chartContainer}>
+            {data.map((value, index) => (
+              <View key={index} style={styles.barContainer}>
+                <View
+                  style={[
+                    styles.bar,
+                    {
+                      height: `${(value / maxValue) * 80}%`,
+                    },
+                  ]}
+                />
+                <Text style={styles.label}>{labels[index]}</Text>
+              </View>
+            ))}
+          </View>
         </View>
         <View style={styles.subcontainer2}>
           <View style={styles.subcontainer}>

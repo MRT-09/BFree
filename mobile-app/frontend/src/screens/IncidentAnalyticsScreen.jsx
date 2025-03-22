@@ -9,14 +9,14 @@ import {
   StatusBar,
   SafeAreaView,
 } from "react-native";
-import { useAuth } from "../context/AuthContext";
-import Navbar from "../components/Navbar";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useNavigation } from "@react-navigation/native";
 import Footer from "../components/Footer";
 const EXPO_PUBLIC_API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 import LineChartComponent from "../components/LineChart";
+import "../services/sound";
+
 const Progress = (props) => {
   if(props.cw===0 || props.pw==0){
     return(<Text>NaN</Text>);
@@ -45,13 +45,6 @@ const Progress = (props) => {
 
 
 };
-
-
-
-
-
-
-
 const Fallback = () =>{
   return(
     <View style={styles.fb}>
@@ -59,9 +52,6 @@ const Fallback = () =>{
     </View>
   );
 };
-
-
-
 const IncidentAnalytics = () => {
   
   const navigation = useNavigation();

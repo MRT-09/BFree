@@ -1,53 +1,22 @@
 from flask import Flask, request, render_template
-import requests
+from flask_socketio import SocketIO, emit
 
 app = Flask(__name__)
-ESP32_IP = "192.168.185.1" 
+socketio = SocketIO(app, cors_allowed_origins="*")
 
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-@app.route('/get-sensor-data')
-def get_sensor_data():
-    try:
-        response = requests.get(f"http://{ESP32_IP}/sensor")
-        return {
-            'success': True,
-            'data': response.json(),
-            'status': response.status_code
-        }
-    except requests.exceptions.RequestException as e:
-        return {
-            'success': False,
-            'error': str(e)
-        }, 500
-
-@app.route('/send-command', methods=['POST'])
-def send_command():
-    command = request.form.get('command')
-    if not command:
-        return {'success': False, 'error': 'No command provided'}, 400
-    
-    try:
-        response = requests.post(
-            f"http://{ESP32_IP}/control",
-            data={'command': command}
-        )
-        return {
-            'success': True,
-            'response': response.text,
-            'status': response.status_code
-        }
-    except requests.exceptions.RequestException as e:
-        return {
-            'success': False,
-            'error': str(e)
-        }, 500
-    
-@app.route('/trigger-sound')
+@app.route('/trigger-sound', methods=['POST', 'GET'])
 def trigger_sound():
-    # Optional: Add server-side logic here (e.g., logging, auth)
-    return '', 204  # Return empty response (No Content)
+    print("Sound trigger received!")
+    socketio.emit('playSound')
+    return '', 204
+
+@socketio.on('connect')
+def handle_connect():
+    print("Client connected!")
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    print("Client disconnected!")
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    socketio.run(app, host='0.0.0.0', port=5001, debug=True)
